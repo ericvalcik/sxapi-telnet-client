@@ -1,0 +1,29 @@
+{
+  "name": "sxapi-telnet-client",
+  "version": "1.0.0",
+  "description": "API library for silixcon's socket server.",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "ts-node index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/valcikeric/sxapi-telnet-client.git"
+  },
+  "keywords": [
+    "silixcon",
+    "sxapi"
+  ],
+  "author": "Eric Valcik",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/valcikeric/sxapi-telnet-client/issues"
+  },
+  "homepage": "https://github.com/valcikeric/sxapi-telnet-client#readme",
+  "dependencies": {
+    "telnet-client": "^2.0.2",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3"
+  }
+}
