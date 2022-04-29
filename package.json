@@ -1,6 +1,6 @@
 {
   "name": "sxapi-telnet-client",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "API library for silixcon's socket server.",
   "main": "index.ts",
   "scripts": {
