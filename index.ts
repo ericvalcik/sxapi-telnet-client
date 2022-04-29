@@ -1,5 +1,5 @@
 import { Telnet } from "telnet-client";
-import { execParams, SxapiVar } from "./consts";
+import { execParams, SxapiVar, Node } from "./consts";
 
 
 type nullableString = string | null;
@@ -39,10 +39,20 @@ export class Sxapi {
     }
 
     // TODO has to be redone because right now the return JSON is not in good
-    // format
     async node(address: number) {
         const ret = await this.connection.exec(`node - ${address}`, execParams);
-        return JSON.parse(ret);
+        const json_ret = JSON.parse(ret);
+        delete Object.assign(json_ret.ident, {['sn']: json_ret.ident['s/n'] })['s/n'];
+        return json_ret;
+    }
+
+    async allNodes(): Promise<Node[]> {
+        const ret = await this.connection.exec(`node - -`, execParams);
+        const nodes = JSON.parse("[" + ret + "]");
+        for (const node of nodes) {
+            delete Object.assign(node.ident, {['sn']: node.ident['s/n'] })['s/n'];
+        }
+        return nodes;
     }
 
     async var(nodeId: string, path: string): Promise<SxapiVar> {
@@ -57,14 +67,14 @@ export class Sxapi {
         return ret;
     }
 
-    async set(nodeId: string, path: string, val) {
+    async set(nodeId: string, path: string, val: string) {
         if (await this.connection.exec(`set ${nodeId} ${path} ${val}`, execParams)) {
             throw Error("Unexpected error with set");
         }
         return;
     }
 
-    async exec(nodeId: string, commnand: string, args:nullableString = null) {
+    async exec(nodeId: string, commnand: string, args: nullableString = null) {
         let ret: any = '0';
         if (args) {
             ret = await this.connection.exec(`exec ${nodeId} /commands/${commnand} ${args}`);
