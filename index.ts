@@ -6,7 +6,8 @@ type nullableString = string | null;
 
 export class Sxapi {
     #ip = '127.0.0.1';
-    #port = 28945
+    #port = 28945;
+    #keepOpen: boolean;
     connection;
     params = {
         host: this.#ip,
@@ -14,8 +15,9 @@ export class Sxapi {
         shellPrompr: '>',
         timeout: 10000
     }
-    constructor() {
+    constructor(keepOpen: boolean = true) {
         this.connection = new Telnet();
+        this.#keepOpen = keepOpen;
     }
 
     async init() {
@@ -26,8 +28,9 @@ export class Sxapi {
             throw e;
         }
 
-        setInterval(() => this.connection.exec("", execParams), 5000);
-
+        if (this.#keepOpen) {
+            setInterval(() => this.connection.exec("", execParams), 5000);
+        }
         return this;
     }
 
@@ -42,7 +45,7 @@ export class Sxapi {
     async node(address: number) {
         const ret = await this.connection.exec(`node - ${address}`, execParams);
         const json_ret = JSON.parse(ret);
-        delete Object.assign(json_ret.ident, {['sn']: json_ret.ident['s/n'] })['s/n'];
+        delete Object.assign(json_ret.ident, { ['sn']: json_ret.ident['s/n'] })['s/n'];
         return json_ret;
     }
 
@@ -50,7 +53,7 @@ export class Sxapi {
         const ret = await this.connection.exec(`node - -`, execParams);
         const nodes = JSON.parse("[" + ret + "]");
         for (const node of nodes) {
-            delete Object.assign(node.ident, {['sn']: node.ident['s/n'] })['s/n'];
+            delete Object.assign(node.ident, { ['sn']: node.ident['s/n'] })['s/n'];
         }
         return nodes;
     }
